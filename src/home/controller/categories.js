@@ -27,17 +27,43 @@ export default class extends think.controller.rest {
   async getAction() {
     let categories = this.model("categories"),
       texts = this.model("texts"),
-      self = this,
+      url = this.http.req.url,
       id = this.id;
-    logger.info(this.get());
+    logger.info(this.http.req.url.split("\/")[2]);
     if (id) {
-      if (_.has(this.get(), 'texts')) {
-        let text = texts.where({
-          "category_id": id
-        }).select();
+      if (think.isEmpty(this.get('texts'))) {
+        id = this.http.req.url.split("\/")[2];
+        // let text = await texts.where({
+        //   "category_id": this.http.req.url.split("\/")[2]
+        // }).select();
 
-        logger.info(text);
-        return this.json(text);
+        // logger.info(text);
+        // 
+        let lists = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE a.id = ${id}`);
+
+        if (!think.isEmpty(lists)) {
+          let text = lists[0];
+          let ret = {
+            "id": text.text_id,
+            "level": {
+              "id": text.level_id,
+              "name": text.level_name
+            },
+            "category": {
+              "id": text.category_id,
+              "name": text.category_name
+            },
+            "name": text.text_name,
+            "authority": text.authority,
+            "issue_date": text.issue_date,
+            "execute_date": text.execute_date,
+            "state": text.text_state,
+            "content": text.content
+          };
+          return this.json(ret);
+        } else {
+          return this.json({});
+        }
       } else {
         this.status(404);
         return this.fail({
@@ -56,9 +82,10 @@ export default class extends think.controller.rest {
       pk = await categories.getPk(),
       postData = this.post();
     delete postData[pk];
-    let insertedData = await texts.thenAdd(postData, {
+    let insertedData = await categories.thenAdd(postData, {
       "name": postData.name
     });
+    logger.info(insertedData);
     if (think.isEmpty(insertedData)) {
       return this.fail({
         reason: "添加失败"

@@ -24,7 +24,6 @@ export default class extends think.controller.rest {
     logger.info("__before");
   }
   async getAction(){
-    logger.info("getAction");
     let levels = this.model("levels");
     let levelList = await levels.order("grade ASC").select();
     return this.json(levelList);
