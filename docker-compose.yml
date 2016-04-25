@@ -1,0 +1,13 @@
+db:
+  image: daocloud.io/library/postgres:9.5-rc1
+  ports:
+    - "5432:5432"
+  environment:
+    - POSTGRES_DATABASE=laws
+    - POSTGRES_PASSWORD=mypassword
+web:
+  build: .
+  ports:
+    - "8360:8360"
+  links:
+    - db

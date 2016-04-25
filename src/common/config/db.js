@@ -19,9 +19,9 @@ export default {
 
     },
     postgresql: {
-      host: '120.25.98.104',
+      host: 'db',
       port: '5432',
-      database: 'postgres',
+      database: 'laws',
       user: 'postgres',
       password: 'mypassword',
       prefix: '',
