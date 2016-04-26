@@ -51,18 +51,23 @@ export default class extends think.controller.rest {
       // }).where({
       //   "a.name|a.content": ["like", `% ${word} %`]
       // }).find();
-      let textList = await texts.query(`SELECT a.id as text_id , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE ( (a.name LIKE '%${word}%') OR (a.content LIKE '%${word}%') )`);
-      let groupBy = _.groupBy(textList, 'level_name');
-      let lists = _.map(groupBy, (val, key) => {
-        let level = _.find(levels, (level) => {
-          return level.name == key
+      if (!word) {
+        return this.json([]);
+      } else {
+        let textList = await texts.query(`SELECT a.id as text_id , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE ( (a.name LIKE '%${word}%') OR (a.content LIKE '%${word}%') )`);
+        let levels = await this.model("levels").order("grade ASC").select();
+        let groupBy = _.groupBy(textList, 'level_name');
+        let lists = _.map(groupBy, (val, key) => {
+          let level = _.find(levels, (level) => {
+            return level.name == key
+          });
+          return {
+            "level": level,
+            "texts": val
+          };
         });
-        return {
-          "level": level,
-          "texts": val
-        };
-      });
-      return this.json(lists);
+        return this.json(lists);
+      }
     }
   }
   async postAction() {
