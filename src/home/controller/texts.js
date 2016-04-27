@@ -31,10 +31,31 @@ export default class extends think.controller.rest {
       id = this.id;
     logger.info(word);
     if (id) {
-      let textList = await texts.where({
-        [pk]: id
-      }).find();
-      return this.json(textList);
+      let lists = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE a.id = ${id}`);
+
+      if (!think.isEmpty(lists)) {
+        let text = lists[0];
+        let ret = {
+          "id": text.text_id,
+          "level": {
+            "id": text.level_id,
+            "name": text.level_name
+          },
+          "category": {
+            "id": text.category_id,
+            "name": text.category_name
+          },
+          "name": text.text_name,
+          "authority": text.authority,
+          "issue_date": text.issue_date,
+          "execute_date": text.execute_date,
+          "state": text.text_state,
+          "content": text.content
+        };
+        return this.json(ret);
+      } else {
+        this.json({});
+      }
     } else {
       //return this.join("think_cate ON think_group.cate_id=think_cate.id").select();
       // let textList = await texts.alias("a").join({
@@ -54,7 +75,7 @@ export default class extends think.controller.rest {
       if (!word) {
         return this.json([]);
       } else {
-        let textList = await texts.query(`SELECT a.id as text_id , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE ( (a.name LIKE '%${word}%') OR (a.content LIKE '%${word}%') )`);
+        let textList = await texts.query(`SELECT a.id as text_id ,a.name as text_name , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE ( (a.name LIKE '%${word}%') OR (a.content LIKE '%${word}%') )`);
         let levels = await this.model("levels").order("grade ASC").select();
         let groupBy = _.groupBy(textList, 'level_name');
         let lists = _.map(groupBy, (val, key) => {
@@ -63,7 +84,16 @@ export default class extends think.controller.rest {
           });
           return {
             "level": level,
-            "texts": val
+            "texts": _.map(val, (v) => {
+              return {
+                "id": v.text_id,
+                "name": v.text_name,
+                "authority": v.authority,
+                "issue_date": v.issue_date,
+                "execute_date": v.execute_date,
+                "state": v.text_state
+              }
+            })
           };
         });
         return this.json(lists);
