@@ -39,31 +39,29 @@ export default class extends think.controller.rest {
 
         // logger.info(text);
         // 
-        let lists = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE a.id = ${id}`);
+        let textList = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE a.category_id = ${id}`);
 
-        if (!think.isEmpty(lists)) {
-          let text = lists[0];
-          let ret = {
-            "id": text.text_id,
-            "level": {
-              "id": text.level_id,
-              "name": text.level_name
-            },
-            "category": {
-              "id": text.category_id,
-              "name": text.category_name
-            },
-            "name": text.text_name,
-            "authority": text.authority,
-            "issue_date": text.issue_date,
-            "execute_date": text.execute_date,
-            "state": text.text_state,
-            "content": text.content
+        let levels = await this.model("levels").order("grade ASC").select();
+        let groupBy = _.groupBy(textList, 'level_name');
+        let lists = _.map(groupBy, (val, key) => {
+          let level = _.find(levels, (level) => {
+            return level.name == key
+          });
+          return {
+            "level": level,
+            "texts": _.map(val, (v) => {
+              return {
+                "id": v.text_id,
+                "name": v.text_name,
+                "authority": v.authority,
+                "issue_date": v.issue_date,
+                "execute_date": v.execute_date,
+                "state": v.text_state
+              }
+            })
           };
-          return this.json(ret);
-        } else {
-          return this.json({});
-        }
+        });
+        return this.json(lists);
       } else {
         this.status(404);
         return this.fail({
