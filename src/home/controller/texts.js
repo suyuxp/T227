@@ -113,13 +113,14 @@ export default class extends think.controller.rest {
         reason: "添加失败"
       });
     } else {
+      logger.info(insertedData);
       if (insertedData.type == 'exist') {
         this.status(409);
         return this.fail({
           "reason": "name_duplicated"
         });
       } else {
-        let lists = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE ( (a.name = '${postData.name}') OR (a.content = '${postData.name}') ) LIMIT 1`);
+        let lists = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE a.id = ${insertedData.id} LIMIT 1`);
 
         if (!think.isEmpty(lists)) {
           let text = lists[0];

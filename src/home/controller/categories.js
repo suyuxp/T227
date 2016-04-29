@@ -33,12 +33,6 @@ export default class extends think.controller.rest {
     if (id) {
       if (think.isEmpty(this.get('texts'))) {
         id = this.http.req.url.split("\/")[2];
-        // let text = await texts.where({
-        //   "category_id": this.http.req.url.split("\/")[2]
-        // }).select();
-
-        // logger.info(text);
-        // 
         let textList = await texts.query(`SELECT a.id as text_id , a.name as text_name  , a.state as text_state , c.name as level_name , d.name as category_name , d.state as category_state , * FROM texts AS a INNER JOIN levels AS c ON a.level_id = c.id INNER JOIN categories AS d ON a.category_id = d.id WHERE a.category_id = ${id}`);
 
         let levels = await this.model("levels").order("grade ASC").select();
@@ -69,10 +63,16 @@ export default class extends think.controller.rest {
         });
       }
     } else {
-      let categoryList = await categories.where({
-        state: "enable"
-      }).order("priority DESC").select();
-      return this.json(categoryList);
+      try {
+        let categoryList = await categories.where({
+          state: "enable"
+        }).order("priority DESC").select();
+        // logger.debug(categoryList);
+        return this.json(categoryList);
+      } catch (e) {
+        logger.error(e);
+        return this.fail(e);
+      }
     }
   }
   async postAction() {
@@ -96,7 +96,7 @@ export default class extends think.controller.rest {
         });
       } else {
         let category = await categories.where({
-          "name": postData.name
+          [pk]: insertedData.id
         }).find();
         this.status(201);
         return this.json(category);
