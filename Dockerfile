@@ -9,7 +9,5 @@ ENV PORT 8360
 RUN npm run compile
 EXPOSE 8360
 
-RUN echo "deb http://mirrors.163.com/debian jessie main" > /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client
-
 CMD node www/production.js
 
