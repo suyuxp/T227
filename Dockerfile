@@ -5,7 +5,11 @@ COPY package.json ./package.json
 RUN npm install cnpm -g --registry=https://registry.npm.taobao.org && cnpm install
 COPY . .
 ENV PORT 8360
-EXPOSE 8360
-# 线上环境
+
 RUN npm run compile
-ENTRYPOINT node www/production.js
+EXPOSE 8360
+
+RUN echo "deb http://mirrors.163.com/debian jessie main" > /etc/apt/sources.list && apt-get update && apt-get install -y postgresql-client
+
+CMD node www/production.js
+

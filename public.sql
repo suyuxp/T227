@@ -14,7 +14,6 @@ File Encoding         : 65001
 Date: 2016-04-25 15:57:51
 */
 
-
 -- ----------------------------
 -- Sequence structure for categories_id_seq
 -- ----------------------------
@@ -65,15 +64,15 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of categories
 -- ----------------------------
-INSERT INTO "public"."categories" VALUES ('1', '合同法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('2', '侵权法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('3', '物权法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('4', '企业法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('5', '金融法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('6', '知识产权法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('7', '劳动人事法律事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('8', '企业经营管理犯罪与风险防范事务', '1', 'enable');
-INSERT INTO "public"."categories" VALUES ('9', '税务', '1', 'enable');
+INSERT INTO "public"."categories" VALUES ('1', '合同法律事务', '10', 'enable');
+INSERT INTO "public"."categories" VALUES ('2', '侵权法律事务', '20', 'enable');
+INSERT INTO "public"."categories" VALUES ('3', '物权法律事务', '30', 'enable');
+INSERT INTO "public"."categories" VALUES ('4', '企业法律事务', '40', 'enable');
+INSERT INTO "public"."categories" VALUES ('5', '金融法律事务', '50', 'enable');
+INSERT INTO "public"."categories" VALUES ('6', '知识产权法律事务', '60', 'enable');
+INSERT INTO "public"."categories" VALUES ('7', '劳动人事法律事务', '70', 'enable');
+INSERT INTO "public"."categories" VALUES ('8', '企业经营管理犯罪与风险防范事务', '80', 'enable');
+INSERT INTO "public"."categories" VALUES ('9', '税务', '90', 'enable');
 
 -- ----------------------------
 -- Table structure for levels
@@ -92,10 +91,10 @@ WITH (OIDS=FALSE)
 -- Records of levels
 -- ----------------------------
 INSERT INTO "public"."levels" VALUES ('1', '法律', 'A');
-INSERT INTO "public"."levels" VALUES ('2', '行政法规', 'B');
-INSERT INTO "public"."levels" VALUES ('3', '部门规章地方法规', 'C');
-INSERT INTO "public"."levels" VALUES ('4', '规范文件', 'D');
-INSERT INTO "public"."levels" VALUES ('5', '工作文件', 'E');
+INSERT INTO "public"."levels" VALUES ('2', '司法解释', 'B');
+INSERT INTO "public"."levels" VALUES ('3', '行政法规', 'C');
+INSERT INTO "public"."levels" VALUES ('4', '部门规章', 'D');
+INSERT INTO "public"."levels" VALUES ('5', '地方性法规', 'E');
 
 -- ----------------------------
 -- Table structure for texts
@@ -121,7 +120,7 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 
 -- ----------------------------
--- Alter Sequences Owned By 
+-- Alter Sequences Owned By
 -- ----------------------------
 ALTER SEQUENCE "public"."categories_id_seq" OWNED BY "categories"."id";
 ALTER SEQUENCE "public"."levels_id_seq" OWNED BY "levels"."id";

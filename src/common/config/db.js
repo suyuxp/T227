@@ -22,8 +22,8 @@ export default {
       host: 'db',
       port: '5432',
       database: 'laws',
-      user: 'postgres',
-      password: 'mypassword',
+      user: 'docker',
+      password: 'ts3qdf',
       prefix: '',
       encoding: 'utf8'
     }
